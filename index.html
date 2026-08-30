@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ERPConnect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/styles.css?v=22" />
+</head>
+<body>
+  <div class="app-shell is-locked" id="app-shell">
+    <div class="sidebar-scrim" id="sidebar-scrim"></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand">
+        <span class="sidebar__brand-mark" id="sidebar-brand-mark">EC</span>
+        <span class="sidebar__brand-name" id="sidebar-brand-name">ERPConnect</span>
+        <button type="button" class="sidebar__close" id="sidebar-close" aria-label="Fechar menu">
+          <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <nav class="sidebar__nav" aria-label="Navegação principal">
+        <div class="nav-group">
+          <a class="nav-link" href="#/home" data-route="home">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h3v-6h6v6h3a1 1 0 0 0 1-1V10"/></svg>
+            <span>Início</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <p class="nav-group__title">Cadastros</p>
+          <a class="nav-link" href="#/clientes" data-route="clientes">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Clientes</span>
+          </a>
+          <a class="nav-link" href="#/produtos" data-route="produtos">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73Z"/><path d="M3.29 7 12 12l8.71-5"/><path d="M12 22V12"/></svg>
+            <span>Produtos</span>
+          </a>
+          <a class="nav-link" href="#/fornecedores" data-route="fornecedores">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+            <span>Fornecedores</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <p class="nav-group__title">Movimentações</p>
+          <a class="nav-link" href="#/crm" data-route="crm">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H5a2 2 0 0 0-2 2v7a1 1 0 0 0 1 1h4"/><path d="M9 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17"/><path d="M13 8h3"/><path d="M13 12h3"/><path d="M13 16h3"/><path d="M9 21h10a1 1 0 0 0 1-1v-7a2 2 0 0 0-2-2h-4"/></svg>
+            <span>CRM</span>
+          </a>
+          <a class="nav-link" href="#/vendas" data-route="vendas">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h5"/></svg>
+            <span>Loja</span>
+          </a>
+          <a class="nav-link" href="#/agenda" data-route="agenda">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+            <span>Agenda</span>
+          </a>
+          <a class="nav-link" href="#/estoques" data-route="estoques">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V6a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 6v12a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l1-.58"/><path d="M3.29 7 12 12l8.71-5"/><path d="M12 22V12"/><path d="M17 17.5 19 19.5l4-4"/></svg>
+            <span>Estoques</span>
+            <span class="nav-link__badge" id="nav-badge-estoques" hidden></span>
+          </a>
+          <a class="nav-link" href="#/matriculas" data-route="matriculas">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5Z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/></svg>
+            <span>Matrículas</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <p class="nav-group__title">Financeiro</p>
+          <a class="nav-link" href="#/contas-receber" data-route="contas-receber">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span>Contas a Receber</span>
+          </a>
+          <a class="nav-link" href="#/contas-pagar" data-route="contas-pagar">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+            <span>Contas a Pagar</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <p class="nav-group__title">Relatórios</p>
+          <a class="nav-link" href="#/relatorios" data-route="relatorios">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+            <span>Visão geral</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <p class="nav-group__title">Administração</p>
+          <a class="nav-link" href="./pre-cadastro.html" target="_blank" rel="noopener">
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+            <span>Pré-Cadastro</span>
+          </a>
+          <a class="nav-link" href="#/empresas" data-route="empresas" id="nav-empresas" hidden>
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M6 21V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v14"/><path d="M14 21V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v17"/><path d="M9 9h.01"/><path d="M9 13h.01"/><path d="M9 17h.01"/></svg>
+            <span>Empresas</span>
+          </a>
+          <a class="nav-link" href="#/usuarios" data-route="usuarios" id="nav-usuarios" hidden>
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="m16 3.13 1 .1a4 4 0 0 1 0 7.75"/><path d="M19.5 15.5 21 17l3-3"/></svg>
+            <span>Usuários</span>
+          </a>
+          <a class="nav-link" href="#/configuracoes" data-route="configuracoes" id="nav-configuracoes" hidden>
+            <svg aria-hidden="true" focusable="false" class="nav-link__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+            <span>Configurações</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar__footer">
+        <div class="user-chip">
+          <span class="user-chip__avatar" id="user-chip-avatar">–</span>
+          <div>
+            <p class="user-chip__name" id="user-chip-name">—</p>
+            <p class="user-chip__meta" id="user-chip-meta">—</p>
+          </div>
+        </div>
+        <button type="button" class="logout-btn" id="logout-btn">
+          <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          <span>Sair</span>
+        </button>
+        <p class="sidebar__build" id="sidebar-build" title="Se a data não bater com o último push, o navegador está com uma versão antiga em cache — dê um hard refresh (Ctrl+Shift+R).">build —</p>
+      </div>
+    </aside>
+
+    <div class="main-column">
+      <header class="topbar">
+        <div class="topbar__heading">
+          <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Abrir menu">
+            <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16"/><path d="M4 6h16"/><path d="M4 18h16"/></svg>
+          </button>
+          <div>
+            <p class="topbar__breadcrumb" id="breadcrumb">Início</p>
+            <h1 class="topbar__title" id="page-title">Painel do dia</h1>
+          </div>
+        </div>
+        <div class="topbar__actions" id="topbar-actions"></div>
+      </header>
+
+      <main class="view" id="view" aria-live="polite"></main>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" id="modal">
+      <div class="modal__header">
+        <h2 id="modal-title"></h2>
+        <button type="button" class="icon-btn" id="modal-close" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="modal__body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toast-stack" aria-live="assertive"></div>
+
+  <script type="module" src="./assets/app.js"></script>
+</body>
+</html>

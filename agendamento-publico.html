@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agendar aula · ERPConnect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/styles.css?v=19" />
+</head>
+<body>
+  <div class="precadastro-screen">
+    <div class="precadastro-card">
+      <div class="login-card__brand">
+        <span class="sidebar__brand-mark" style="background: var(--accent);" id="ap-brand-mark">EC</span>
+        <span class="login-card__brand-name" id="ap-brand-name">ERPConnect</span>
+      </div>
+      <h1 class="precadastro-title">Agende sua aula</h1>
+      <p class="login-card__hint" id="ap-hint">Escolha o serviço, a data e o horário, e preencha seus dados para confirmar.</p>
+
+      <div id="ap-loading" class="empty-state">Carregando…</div>
+      <div id="ap-indisponivel" class="empty-state" hidden></div>
+
+      <form id="ap-form" hidden>
+        <div id="ap-error"></div>
+        <div class="form-grid">
+          <div class="field field--full">
+            <label for="ap-servico">Serviço<span class="field-required">*</span></label>
+            <select class="input" id="ap-servico" required></select>
+          </div>
+          <div class="field">
+            <label for="ap-data">Data<span class="field-required">*</span></label>
+            <input class="input" type="date" id="ap-data" required />
+          </div>
+          <div class="field">
+            <label for="ap-horario">Horário<span class="field-required">*</span></label>
+            <select class="input" id="ap-horario" required disabled>
+              <option value="">Escolha a data primeiro</option>
+            </select>
+          </div>
+          <div class="field field--full">
+            <label for="ap-nome">Nome<span class="field-required">*</span></label>
+            <input class="input" type="text" id="ap-nome" required />
+          </div>
+          <div class="field field--full">
+            <label for="ap-documento">CPF/CNPJ<span class="field-required">*</span></label>
+            <input class="input" type="text" id="ap-documento" placeholder="Só números ou com pontuação" required />
+          </div>
+          <div class="field">
+            <label for="ap-telefone">Telefone</label>
+            <input class="input" type="text" id="ap-telefone" />
+          </div>
+          <div class="field">
+            <label for="ap-email">E-mail</label>
+            <input class="input" type="email" id="ap-email" />
+          </div>
+          <div class="field field--full">
+            <label for="ap-obs">Observações</label>
+            <textarea class="input" id="ap-obs" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="hp-field" aria-hidden="true">
+          <label for="ap-website">Deixe este campo em branco</label>
+          <input type="text" id="ap-website" tabindex="-1" autocomplete="off" />
+        </div>
+        <button type="submit" class="btn btn--primary" id="ap-submit" style="width:100%; justify-content:center; margin-top: 1.25rem;">Confirmar agendamento</button>
+      </form>
+
+      <div id="ap-success" hidden></div>
+    </div>
+  </div>
+
+  <script type="module" src="./assets/agendamento-publico.js?v=1"></script>
+</body>
+</html>

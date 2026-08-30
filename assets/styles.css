@@ -1,0 +1,2959 @@
+/* Paleta "quadro-negro + caderneta" — ERPConnect é uma ferramenta de
+   secretaria escolar, não uma vitrine de mercado: o verde vem do quadro-negro
+   (não da fruta fresca), o âmbar vem do selo de quadro de honra (não da
+   etiqueta de preço), o vermelho vem da caneta de correção do professor
+   (não do açougue), o azul vem da tinta da caneta esferográfica no diário. */
+:root {
+  color-scheme: light;
+  /* Quadro-negro (sidebar) */
+  --ink: #13251d;
+  --ink-soft: #1b3227;
+  --ink-line: #2b4a39;
+  --ink-text: #eef3ec;
+  --ink-text-muted: #9bb3a3;
+
+  /* Giz verde (primária) */
+  --accent: #2a8a5a;
+  --accent-deep: #1a6640;
+  --accent-soft: #e2f2ea;
+
+  /* Selo de quadro de honra (secundária / atenção) */
+  --amber: #b9861f;
+  --amber-deep: #8f6512;
+  --amber-soft: #f7edd4;
+
+  /* Caneta de correção (perigo) */
+  --danger: #b93d2c;
+  --danger-deep: #93301f;
+  --danger-soft: #f7e1da;
+
+  /* Tinta esferográfica (informação) */
+  --info: #34608f;
+  --info-deep: #274a6f;
+  --info-soft: #e2ecf4;
+
+  --success: #2a8a5a;
+  --success-soft: #e2f2ea;
+  --warning: #b9861f;
+  --warning-soft: #f7edd4;
+
+  /* Superfícies — papel de caderno, não etiqueta de mercado */
+  --paper: #f9f6ee;
+  --surface: #ffffff;
+  --line: #e7e0cd;
+  --line-strong: #d5cbaf;
+
+  --text: #1e1c14;
+  --text-muted: #6d6a58;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font-display: "Archivo", "Arial Black", sans-serif;
+  --font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --sidebar-w: 252px;
+  --shadow-card: 0 1px 2px rgba(30, 28, 20, 0.04), 0 8px 20px -12px rgba(30, 28, 20, 0.12);
+  --shadow-pop: 0 20px 50px rgba(19, 37, 29, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+svg {
+  display: block;
+}
+
+/* [hidden] deve sempre vencer, mesmo contra classes que definem display
+   próprio (ex.: .nav-link, .field) — sem isso, um elemento com a mesma
+   especificidade CSS declarada depois no arquivo reaparece mesmo com o
+   atributo hidden presente. */
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-deep);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ── Shell ─────────────────────────────────────────────────────────── */
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+}
+
+.sidebar-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 22, 17, 0.45);
+  z-index: 39;
+}
+
+/* Sticky (não mais fixed) dentro do layout flex do app-shell: gruda no
+   topo da viewport durante a rolagem, igual o .topbar já faz, mas sem
+   tirar o menu do fluxo do documento. Isso deixa a página com uma única
+   barra de rolagem — um menu mais alto que a tela (grupo Administração
+   etc.) rola junto com o resto em vez de precisar de scroll interno
+   próprio, que ficava visualmente estranho isolado na coluna do menu. */
+.sidebar {
+  background: var(--ink);
+  background-image: linear-gradient(175deg, var(--ink) 0%, #102016 100%);
+  color: var(--ink-text);
+  display: flex;
+  flex-direction: column;
+  padding: 1.35rem 0 1rem;
+  position: sticky;
+  top: 0;
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  min-height: 100vh;
+  z-index: 30;
+}
+
+.main-column {
+  flex: 1;
+  min-height: 100vh;
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0 1.35rem 1.35rem;
+  border-bottom: 1px solid var(--ink-line);
+  margin-bottom: 1.1rem;
+}
+
+.sidebar__brand-mark {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.85rem;
+  background: var(--accent);
+  color: #ffffff;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  letter-spacing: 0.01em;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px -3px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar__brand-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.08rem;
+  letter-spacing: -0.01em;
+}
+
+.sidebar__close {
+  display: none;
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: var(--ink-text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.sidebar__nav {
+  flex: 1;
+  padding: 0 0.8rem;
+}
+
+.nav-group {
+  margin-bottom: 1.5rem;
+}
+
+.nav-group__title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-text-muted);
+  margin: 0 0 0.5rem;
+  padding: 0 0.65rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.65rem 0.7rem 0.65rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #c7d6cc;
+  border-left: 3px solid transparent;
+  margin-bottom: 0.15rem;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.nav-link__icon {
+  flex-shrink: 0;
+  color: #7f9686;
+  transition: color 0.12s ease;
+}
+
+/* Contador de pendências (parcelas vencidas, estoque baixo) — visível no
+   menu o tempo todo, não só ao abrir o painel Início (ver app.js,
+   refreshPendencyBadges). */
+.nav-link__badge {
+  flex-shrink: 0;
+  margin-left: auto;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.35rem;
+  text-align: center;
+}
+
+.nav-link:hover {
+  background: var(--ink-soft);
+  color: #ffffff;
+}
+
+.nav-link:hover .nav-link__icon {
+  color: #c7d6cc;
+}
+
+.nav-link.is-active {
+  background: var(--ink-soft);
+  border-left-color: var(--amber);
+  color: #ffffff;
+}
+
+.nav-link.is-active .nav-link__icon {
+  color: var(--amber);
+}
+
+.sidebar__footer {
+  padding: 1rem 1.2rem 0;
+  border-top: 1px solid var(--ink-line);
+  margin-top: 0.5rem;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.user-chip > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.user-chip__name,
+.user-chip__meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.9rem;
+  padding: 0.55rem 0.7rem;
+  background: transparent;
+  border: 1px solid var(--ink-line);
+  border-radius: var(--radius-sm);
+  color: var(--ink-text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.logout-btn:hover {
+  color: #ffffff;
+  background: var(--danger-deep);
+  border-color: var(--danger-deep);
+}
+
+.user-chip__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-chip__name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f6f8f5;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.user-chip__meta {
+  font-size: 0.74rem;
+  color: var(--ink-text-muted);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.sidebar__build {
+  margin: 0.7rem 0 0;
+  font-size: 0.68rem;
+  color: var(--ink-text-muted);
+  opacity: 0.6;
+  text-align: center;
+}
+
+.main-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.6rem 2.1rem 1.2rem;
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--paper);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.topbar__heading {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-bottom: 0.2rem;
+}
+
+.topbar__breadcrumb {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin: 0 0 0.3rem;
+}
+
+.topbar__title {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Grupo de abas dentro do topbar (Relatórios, Estoques): fica junto dos
+   botões de ação primária em vez de flutuar solto no topo do conteúdo —
+   uma linha só, em vez de duas fileiras de botão desconectadas. */
+.topbar-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  padding-right: 0.7rem;
+  margin-right: 0.1rem;
+  border-right: 1px solid var(--line-strong);
+}
+
+@media (max-width: 560px) {
+  .topbar-tabs {
+    border-right: none;
+    padding-right: 0;
+    width: 100%;
+  }
+}
+
+.view {
+  padding: 1.6rem 2.1rem 3rem;
+  flex: 1;
+}
+
+/* ── Login ─────────────────────────────────────────────────────────── */
+
+.app-shell.is-locked .sidebar,
+.app-shell.is-locked .sidebar-scrim,
+.app-shell.is-locked .topbar {
+  display: none;
+}
+
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(47, 143, 82, 0.09), transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(207, 138, 31, 0.1), transparent 45%),
+    var(--paper);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  padding: 2.2rem 2rem 2rem;
+}
+
+.login-card__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.4rem;
+}
+
+.login-card__brand-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.login-card__hint {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0 0 1.5rem;
+}
+
+.login-card .field {
+  margin-bottom: 1rem;
+}
+
+/* ── Pré-cadastro (tela pública, sem login) ───────────────────────── */
+
+.precadastro-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(47, 143, 82, 0.09), transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(207, 138, 31, 0.1), transparent 45%),
+    var(--paper);
+}
+
+.precadastro-card {
+  width: 100%;
+  max-width: 560px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  padding: 2.4rem 2.2rem 2.2rem;
+}
+
+/* Campo-armadilha (honeypot) contra bots de spam no pré-cadastro público:
+   escondido de gente de verdade sem usar display:none/hidden (que alguns
+   bots já sabem ignorar), mas continua acessível a leitores de tela — por
+   isso o aria-hidden explícito no próprio campo em pre-cadastro.html. */
+.hp-field {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.precadastro-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0.9rem 0 0.5rem;
+  color: var(--text);
+}
+
+.precadastro-success {
+  text-align: center;
+  padding: 1.5rem 0.5rem;
+}
+
+.precadastro-success__icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+}
+
+.precadastro-success__title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+}
+
+.precadastro-success__hint {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────── */
+
+.btn {
+  font-family: var(--font-sans);
+  font-size: 0.87rem;
+  font-weight: 700;
+  padding: 0.65rem 1.1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: filter 0.12s ease, background 0.12s ease, transform 0.05s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:hover {
+  filter: brightness(0.95);
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 2px 0 0 var(--accent-deep);
+}
+
+.btn--ghost {
+  background: var(--surface);
+  border-color: var(--line-strong);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.btn--danger {
+  background: var(--danger-soft);
+  color: var(--danger-deep);
+  border-color: #eac6bd;
+  font-weight: 600;
+}
+
+.btn--sm {
+  padding: 0.42rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--radius-sm);
+}
+
+.icon-btn:hover {
+  color: var(--danger-deep);
+  background: var(--danger-soft);
+}
+
+/* ── Segmented control (replaces small fixed <select> pickers) ───────── */
+
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 0.3rem;
+  padding: 0.3rem;
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+}
+
+.segmented__btn {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.5rem 0.85rem;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex: 1 1 auto;
+  white-space: nowrap;
+  text-align: center;
+  transition: background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.segmented__btn:hover {
+  color: var(--text);
+}
+
+.segmented__btn.is-active {
+  background: var(--surface);
+  color: var(--accent-deep);
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Cards & Toolbar ───────────────────────────────────────────────── */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.search-input-wrap {
+  position: relative;
+  min-width: 300px;
+}
+
+.search-input-wrap svg {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-input-wrap .input {
+  padding-left: 2.4rem;
+}
+
+.record-count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.pagination__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.financeiro-filtro {
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+/* Campos "De / Até / Filtrar / Só pendentes" do filtro de período (Contas a
+   Receber, Contas a Pagar, Estoques, Relatórios). Classes, não style
+   inline, porque esse flex-basis só faz sentido com o toolbar em LINHA —
+   no celular (ver @media 560px) o toolbar vira COLUNA e, nesse eixo,
+   flex-basis em px passa a valer como ALTURA em vez de largura. Um valor
+   inline venceria a media query e abriria um vão vazio de ~160px atrás de
+   cada campo; como classe, a regra do breakpoint sobrepõe normalmente. */
+.financeiro-filtro__field--date {
+  flex: 0 0 160px;
+}
+
+.financeiro-filtro__field--action {
+  flex: 0 0 auto;
+}
+
+.financeiro-filtro__field--push {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.financeiro-filtro__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.input, select.input, textarea.input {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.62rem 0.8rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text);
+  width: 100%;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--accent-deep);
+  outline-offset: 1px;
+}
+
+.field-required {
+  color: var(--danger);
+  margin-left: 0.15rem;
+}
+
+.field-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0.35rem 0 0;
+}
+
+.field-hint--error {
+  color: var(--danger-deep);
+}
+
+/* ── Dynamic search-select (replaces <select> combo boxes) ───────────── */
+
+.search-select {
+  position: relative;
+}
+
+.search-select__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-select__control svg {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-select__input {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.62rem 2.2rem 0.62rem 2.4rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text);
+  width: 100%;
+}
+
+.search-select__input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-select.has-value .search-select__input {
+  font-weight: 700;
+  color: var(--accent-deep);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.search-select__clear {
+  position: absolute;
+  right: 0.5rem;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-select__clear:hover {
+  background: var(--danger-soft);
+  color: var(--danger-deep);
+}
+
+.search-select__clear[hidden] {
+  display: none;
+}
+
+.search-select__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-pop);
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 0.35rem;
+}
+
+.search-select__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+
+.search-select__option-label {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.search-select__option-meta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.search-select__option:hover,
+.search-select__option.is-highlighted {
+  background: var(--accent-soft);
+}
+
+.search-select__option:hover .search-select__option-label,
+.search-select__option.is-highlighted .search-select__option-label {
+  color: var(--accent-deep);
+}
+
+.search-select__empty {
+  padding: 0.9rem 0.65rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ── Data table ────────────────────────────────────────────────────── */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.89rem;
+}
+
+/* A 1ª coluna costuma ser o nome (aluno, produto, fornecedor) — sem uma
+   largura mínima ela é a primeira a ceder espaço pras outras colunas e
+   acaba quebrando em 2 linhas mesmo com nomes curtos como "Curso Ingles". */
+.data-table th:first-child,
+.data-table td:first-child {
+  min-width: 160px;
+}
+
+.data-table th {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: left;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 2px solid var(--line-strong);
+  white-space: nowrap;
+  background: var(--paper);
+}
+
+.data-table thead tr th:first-child {
+  border-top-left-radius: var(--radius);
+}
+
+.data-table thead tr th:last-child {
+  border-top-right-radius: var(--radius);
+}
+
+.th-sort {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font: inherit;
+  font-weight: 700;
+  color: inherit;
+  padding: 0;
+}
+
+.th-sort:hover {
+  color: var(--accent-deep);
+}
+
+.th-sort__caret {
+  opacity: 0.4;
+  font-size: 0.65em;
+}
+
+.th-sort.is-active {
+  color: var(--accent-deep);
+}
+
+.th-sort.is-active .th-sort__caret {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.data-table td {
+  padding: 0.8rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background: #fbf9f2;
+}
+
+.data-table tbody tr:hover {
+  background: var(--accent-soft);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.cell-num {
+  font-family: var(--font-mono);
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.cell-actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.cell-muted {
+  color: var(--text-muted);
+}
+
+.cell-rail {
+  box-shadow: inset 3px 0 0 0 var(--rail-color, transparent);
+}
+
+/* ── Status (sticker-style pills) ──────────────────────────────────── */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem 0.25rem 0.55rem;
+  border-radius: 999px;
+}
+
+.status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.status--confirmada { color: var(--success); background: var(--success-soft); }
+.status--orcamento { color: var(--warning); background: var(--warning-soft); }
+.status--cancelada { color: var(--danger); background: var(--danger-soft); }
+.status--aguardando_pagamento { color: var(--warning); background: var(--warning-soft); }
+.status--ativo { color: var(--success); background: var(--success-soft); }
+.status--inativo { color: var(--text-muted); background: var(--line); }
+.status--admin { color: var(--amber-deep); background: var(--amber-soft); }
+.status--caixa { color: var(--text-muted); background: var(--line); }
+.status--pendente { color: var(--warning); background: var(--warning-soft); }
+.status--aprovado { color: var(--success); background: var(--success-soft); }
+.status--reprovado { color: var(--danger); background: var(--danger-soft); }
+.status--venda { color: var(--accent-deep); background: var(--accent-soft); }
+.status--manual { color: var(--amber-deep); background: var(--amber-soft); }
+.status--matricula { color: var(--info-deep); background: var(--info-soft); }
+.status--atrasada { color: var(--danger-deep); background: var(--danger-soft); }
+.status--entrada { color: var(--accent-deep); background: var(--accent-soft); }
+.status--saida { color: var(--danger-deep); background: var(--danger-soft); }
+.status--draft { color: var(--text-muted); background: var(--line); }
+.status--enviada { color: var(--info-deep); background: var(--info-soft); }
+.status--aprovada { color: var(--success); background: var(--success-soft); }
+.status--reprovada { color: var(--danger); background: var(--danger-soft); }
+
+/* ── Empty state ───────────────────────────────────────────────────── */
+
+.empty-state {
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.empty-state__title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 0.4rem;
+}
+
+.empty-state__hint {
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+/* ── Skeleton loading ──────────────────────────────────────────────── */
+
+.skeleton-table td {
+  padding: 0.95rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.skeleton-bar {
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #eee7d6 25%, #f7f2e5 37%, #eee7d6 63%);
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+/* ── Modal ─────────────────────────────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 22, 17, 0.55);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4vh 1rem;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 580px;
+  box-shadow: var(--shadow-pop);
+  animation: modal-in 0.15s ease;
+}
+
+.modal--wide {
+  max-width: 900px;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 2px 0 -1px var(--accent);
+}
+
+.modal__header h2 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.modal__body {
+  padding: 1.5rem;
+}
+
+/* ── Forms ─────────────────────────────────────────────────────────── */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.1rem;
+}
+
+/* Linha "produto + quantidade + adicionar" da Loja: proporção própria
+   (produto ganha o espaço, quantidade e botão ficam compactos). Fica como
+   classe — não como style inline — pra continuar obedecendo o breakpoint
+   de .form-grid que empilha tudo em 1 coluna no celular; um inline style
+   tem prioridade sobre qualquer regra de folha de estilo, então sempre
+   venceria a media query e travava a linha em 3 colunas apertadas. */
+.form-grid--itens {
+  grid-template-columns: 2fr 1fr auto;
+  align-items: end;
+}
+
+/* Linha "produto + quantidade + preço + adicionar" do CRM (Propostas):
+   mesma razão de ser da variante acima, só com uma coluna a mais porque o
+   preço do item é editável ali (é um orçamento, não uma venda a preço de
+   tabela). */
+.form-grid--itens-proposta {
+  grid-template-columns: 2fr 0.8fr 1fr auto;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field--full {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+}
+
+.form-error {
+  background: var(--danger-soft);
+  color: var(--danger-deep);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.form-info {
+  background: var(--success-soft);
+  color: var(--success);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* ── Toast ─────────────────────────────────────────────────────────── */
+
+.toast-stack {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 100;
+}
+
+.toast {
+  font-size: 0.87rem;
+  font-weight: 600;
+  padding: 0.75rem 1.1rem;
+  border-radius: var(--radius-sm);
+  background: var(--ink);
+  color: var(--ink-text);
+  box-shadow: var(--shadow-pop);
+  min-width: 230px;
+  animation: toast-in 0.15s ease;
+}
+
+.toast--success { border-left: 4px solid var(--accent); }
+.toast--error { border-left: 4px solid var(--danger); }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Vendas: carrinho + recibo ─────────────────────────────────────── */
+
+.venda-layout {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1.4rem;
+  align-items: start;
+}
+
+.receipt {
+  padding: 1.4rem 1.5rem;
+  font-family: var(--font-mono);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 27px,
+    var(--line) 27px,
+    var(--line) 28px
+  );
+  background-position: 0 3.2rem;
+}
+
+.receipt__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.87rem;
+  padding: 0.3rem 0;
+}
+
+.receipt__row > span:first-child {
+  color: var(--text-muted);
+}
+
+.receipt__tear {
+  border-top: 1px dashed var(--line-strong);
+  margin: 0.75rem 0;
+}
+
+.receipt__total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  font-weight: 800;
+  padding-top: 0.4rem;
+  color: var(--accent-deep);
+}
+
+.receipt__label {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin: 0 0 0.6rem;
+}
+
+/* Matrículas reaproveita a estrutura do recibo (linhas + total) pro resumo
+   financeiro, mas sem o clima de "comprovante de compra" — é uma relação
+   com o aluno, não uma venda de balcão. */
+.receipt--plain {
+  font-family: var(--font-sans);
+  background-image: none;
+}
+
+/* ── Matrículas: cartões de contexto (aluno / curso) ──────────────────
+   Aparecem só depois que o campo correspondente é preenchido — dão ao
+   atendente, na hora, o contato do aluno e as orientações do curso, sem
+   precisar abrir outra tela ou lembrar de cor. */
+.info-card {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  font-size: 0.85rem;
+}
+
+.info-card--curso {
+  background: var(--info-soft);
+}
+
+.info-card__title {
+  margin: 0 0 0.5rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+
+.info-card--curso .info-card__title {
+  color: var(--info-deep);
+}
+
+.info-card__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.15rem 0;
+}
+
+.info-card__row > span:first-child {
+  color: var(--text-muted);
+}
+
+.info-card__text {
+  margin: 0;
+  white-space: pre-line;
+  line-height: 1.45;
+}
+
+.info-card__text--muted {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.info-card__hint {
+  margin: 0.5rem 0 0;
+  color: var(--text-muted);
+}
+
+.info-card__hint--alert {
+  color: var(--warning);
+  font-weight: 700;
+}
+
+/* ── Matrículas: fluxo em etapas ───────────────────────────────────────
+   Diferente da Loja (carrinho + recibo): aqui é sempre 1 aluno + 1 curso,
+   então o formulário vira 3 passos lidos em sequência (aluno → curso →
+   pagamento) em vez de itens soltos numa lista. O painel de pagamento não
+   imita um comprovante de compra — destaca separadamente o que é cobrado
+   agora (1ª parcela) do valor total contratado, porque numa matrícula
+   parcelada é essa diferença que importa pro atendente, não o "recibo". */
+.matricula-layout {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1.4rem;
+  align-items: start;
+}
+
+.matricula-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.step-card {
+  padding: 1.25rem 1.35rem 1.4rem;
+}
+
+.step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.step-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding-bottom: 0.85rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.step-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.enroll-summary {
+  padding: 1.25rem 1.35rem 1.4rem;
+  position: sticky;
+  top: 1.5rem;
+}
+
+.enroll-summary .step-num {
+  background: var(--accent);
+  color: #fff;
+}
+
+.enroll-summary__label {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin: 0 0 0.6rem;
+}
+
+.enroll-summary__lines {
+  margin-top: 1.1rem;
+}
+
+.enroll-summary__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.87rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.enroll-summary__row:last-child {
+  border-bottom: none;
+}
+
+.enroll-summary__row > span:first-child {
+  color: var(--text-muted);
+}
+
+.enroll-summary__discount {
+  width: 100px;
+  text-align: right;
+}
+
+.enroll-summary__due {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1rem;
+  margin: 1.1rem 0 1.25rem;
+}
+
+.enroll-summary__due-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--accent-deep);
+}
+
+.enroll-summary__due-value {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--accent-deep);
+}
+
+.enroll-summary__due-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Cabeçalho da venda: quem é o cliente (opcional) e quando — compacto,
+   porque numa venda de balcão isso raramente muda em relação ao padrão
+   (sem cliente, hoje). O grosso da tela é para os itens. */
+.venda-meta {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 0.6rem;
+}
+
+.venda-meta__data {
+  flex: 0 0 148px;
+}
+
+.field-optional {
+  font-weight: 500;
+  color: var(--text-muted);
+  opacity: 0.7;
+  text-transform: none;
+}
+
+.venda-obs-toggle {
+  display: inline-block;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent-deep);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.venda-obs-toggle:hover {
+  text-decoration: underline;
+}
+
+.venda-obs {
+  margin-bottom: 1.25rem;
+}
+
+/* Forma de pagamento como tiles com ícone — a ação de fechamento da venda,
+   não mais uma fileira de pílulas de texto que não cabiam lado a lado. */
+.paytiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: 0.5rem;
+}
+
+.paytile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.65rem 0.4rem;
+  background: var(--surface);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: border-color 0.12s ease, background 0.12s ease, color 0.12s ease;
+}
+
+.paytile:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.paytile.is-active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-deep);
+}
+
+.paytile__icon {
+  display: flex;
+}
+
+.paytile__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.15;
+}
+
+/* ── Agenda de atendimentos ────────────────────────────────────────── */
+
+.status--agendado { color: var(--warning); background: var(--warning-soft); }
+.status--atendido { color: var(--success); background: var(--success-soft); }
+
+.agenda__toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.agenda__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1 1 260px;
+}
+
+.agenda__label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin: 0 0 0 0.3rem;
+}
+
+/* Dia: resumo do dia + lista vertical de horários, cada um sua linha.
+   Cada linha ganha uma rail de cor (mesmo padrão de .cell-rail usado nas
+   tabelas de Usuários/Cadastros) para status ser reconhecível de relance,
+   sem depender só do texto do selo. */
+
+.agenda-day__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  padding: 0 0.2rem 0.9rem;
+  margin-bottom: 0.4rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.agenda-day__stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.agenda-day__stat::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--dot-color, var(--text-muted));
+  flex-shrink: 0;
+}
+
+.agenda-day {
+  display: flex;
+  flex-direction: column;
+}
+
+.agenda-slot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding: 0.85rem 0.2rem 0.85rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.agenda-slot:last-child {
+  border-bottom: none;
+}
+
+.agenda-slot__hora {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text);
+  flex: 0 0 56px;
+}
+
+.agenda-slot__agora {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin-top: 0.2rem;
+}
+
+.agenda-slot--livre .agenda-slot__hora {
+  color: var(--text-muted);
+}
+
+.agenda-slot__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.agenda-slot__cliente {
+  margin: 0;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.agenda-slot__detalhe {
+  margin: 0.1rem 0 0;
+  font-size: 0.8rem;
+}
+
+.agenda-slot__atraso {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--danger-deep);
+}
+
+.agenda-slot--livre {
+  opacity: 0.75;
+}
+
+.agenda-slot--passado.agenda-slot--livre {
+  opacity: 0.4;
+}
+
+.agenda-slot--agora {
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+}
+
+.agenda-slot__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Semana: 7 colunas, cada uma com um resumo compacto do dia. */
+
+.agenda-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.75rem;
+}
+
+.agenda-week__col {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem;
+  min-height: 140px;
+}
+
+.agenda-week__col.is-today {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.agenda-week__head {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  background: none;
+  border: none;
+  padding: 0 0 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.agenda-week__dow {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.agenda-week__daynum {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.agenda-week__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.agenda-week__empty {
+  text-align: center;
+  font-size: 0.78rem;
+  margin: 0.5rem 0 0;
+}
+
+.agenda-week__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.05rem;
+  width: 100%;
+  background: var(--warning-soft);
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.45rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.agenda-week__item.is-atendido {
+  background: var(--success-soft);
+}
+
+.agenda-week__row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.agenda-week__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--warning);
+  flex-shrink: 0;
+}
+
+.agenda-week__item.is-atendido .agenda-week__dot {
+  background: var(--success);
+}
+
+.agenda-week__hora {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.agenda-week__nome {
+  font-size: 0.76rem;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Mês: grade de dias com contagem de agendados/atendidos. */
+
+.agenda-month__dow-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 0.5rem;
+}
+
+.agenda-month__dow-row span {
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.agenda-month__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.4rem;
+}
+
+.agenda-month__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  aspect-ratio: 1;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem;
+  cursor: pointer;
+  transition: border-color 0.12s ease;
+}
+
+.agenda-month__cell:hover {
+  border-color: var(--accent);
+}
+
+.agenda-month__cell.is-today {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.agenda-month__cell.is-outside {
+  opacity: 0.4;
+}
+
+.agenda-month__daynum {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.agenda-month__cell.is-today .agenda-month__daynum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7em;
+  height: 1.7em;
+  background: var(--accent);
+  color: #ffffff;
+  border-radius: 50%;
+}
+
+.agenda-month__badges {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.agenda-month__badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.05rem 0.4rem;
+}
+
+.agenda-month__badge--agendado { color: var(--warning); background: var(--warning-soft); }
+.agenda-month__badge--atendido { color: var(--success); background: var(--success-soft); }
+
+/* ── Home: saudação + ações rápidas ───────────────────────────────── */
+
+.home-hero {
+  margin-bottom: 1.5rem;
+}
+
+.home-hero__eyebrow {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin: 0 0 0.3rem;
+}
+
+.home-hero__title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--text);
+}
+
+.home-hero__empresa {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin: 0.35rem 0 0;
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+}
+
+.quick-action {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+  transition: transform 0.1s ease, border-color 0.12s ease;
+}
+
+.quick-action:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.quick-action__title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.quick-action__hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── Relatórios: price-tag stat cards ─────────────────────────────── */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.1rem;
+  margin-bottom: 1.6rem;
+}
+
+.stat-card {
+  position: relative;
+  padding: 1.25rem 1.35rem 1.15rem 1.7rem;
+  border-top: 4px solid var(--tag-color, var(--accent));
+  overflow: visible;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+
+.stat-card__label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 0.55rem;
+}
+
+.stat-card__value {
+  font-family: var(--font-mono);
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Regra dupla de caderno pautado — a linha fina de baixo (a "margem") fica
+   na cor de destaque, ecoando a régua vermelha do caderno escolar sem
+   copiá-la literalmente. Assinatura visual usada em todo cabeçalho de
+   seção do app (Relatórios, Financeiro, Estoques, Configurações…). */
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 800;
+  margin: 0 0 0.9rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 2px solid var(--line-strong);
+  box-shadow: 0 3px 0 -2px var(--accent);
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+}
+
+.card-section {
+  padding: 1.25rem 1.35rem 1.4rem;
+  margin-bottom: 1.4rem;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .venda-layout { grid-template-columns: 1fr; }
+  .matricula-layout { grid-template-columns: 1fr; }
+  .enroll-summary { position: static; }
+  .form-grid { grid-template-columns: 1fr; }
+  .report-grid { grid-template-columns: 1fr; }
+
+  .agenda-week {
+    grid-template-columns: repeat(7, minmax(96px, 1fr));
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+  }
+
+  .agenda-month {
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+  }
+
+  .agenda-month__dow-row,
+  .agenda-month__grid {
+    grid-template-columns: repeat(7, minmax(96px, 1fr));
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .agenda-month__cell {
+    aspect-ratio: auto;
+    min-height: 72px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .quick-actions { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 960px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 40;
+    transform: translateX(-100%);
+    transition: transform 0.18s ease;
+  }
+
+  .app-shell.is-nav-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .app-shell.is-nav-open .sidebar-scrim {
+    display: block;
+  }
+
+  .sidebar__close {
+    display: inline-flex;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+  }
+
+  .topbar {
+    padding: 1.25rem 1.25rem 1rem;
+  }
+
+  .view {
+    padding: 1.25rem 1.25rem 2.5rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Título + ações competiam pela mesma linha (título de 2-3 palavras
+     quebrava em 3 linhas colado no botão de menu). Empilha e deixa os
+     botões de ação ocuparem a largura toda, em vez de espremer. */
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.9rem;
+  }
+
+  .topbar__actions {
+    flex-wrap: wrap;
+  }
+
+  .topbar__actions .btn {
+    flex: 1 1 140px;
+    justify-content: center;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .financeiro-filtro__field--date,
+  .financeiro-filtro__field--action,
+  .financeiro-filtro__field--push {
+    flex: 1 1 auto;
+    margin-left: 0;
+  }
+
+  .search-input-wrap {
+    min-width: 0;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .venda-meta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .venda-meta__data {
+    flex: 1 1 auto;
+  }
+
+  .agenda-slot {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+  }
+
+  .agenda-slot__hora {
+    flex: none;
+  }
+
+  .agenda-slot__actions {
+    width: 100%;
+  }
+}
+
+/* ── Impressão de proposta (CRM) ──────────────────────────────────────
+   Sem lib de PDF: crm.js monta o conteúdo dentro de #print-proposta (criado
+   sob demanda) e chama window.print() — o próprio diálogo de impressão do
+   navegador já oferece "Salvar como PDF" como destino. Fica fora do fluxo
+   normal (display:none) e só aparece no @media print, escondendo o resto
+   do app nesse momento (body.is-printing, ligado/desligado por crm.js). */
+#print-proposta {
+  display: none;
+}
+
+@media print {
+  body.is-printing > *:not(#print-proposta) {
+    display: none !important;
+  }
+
+  body.is-printing #print-proposta {
+    display: block;
+    font-family: Arial, sans-serif;
+    color: #111;
+    padding: 1.5rem;
+  }
+
+  #print-proposta h1 {
+    font-size: 1.3rem;
+    margin: 0 0 0.2rem;
+  }
+
+  #print-proposta table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+  }
+
+  #print-proposta .print-info td {
+    padding: 0.2rem 0.4rem;
+  }
+
+  #print-proposta .print-info td:first-child {
+    color: #666;
+    width: 40%;
+  }
+
+  #print-proposta .print-itens th,
+  #print-proposta .print-itens td {
+    border-bottom: 1px solid #ddd;
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+  }
+
+  #print-proposta .print-totais {
+    max-width: 260px;
+    margin-left: auto;
+  }
+
+  #print-proposta .print-totais td:last-child {
+    text-align: right;
+  }
+
+  #print-proposta .print-total-row td {
+    font-weight: 800;
+    border-top: 1px solid #111;
+    padding-top: 0.4rem;
+  }
+}
+
+/* ── CRM: pipeline (kanban) de propostas ──────────────────────────────
+   Antes, "Propostas" era uma tabela plana e "Nova proposta" reusava
+   inteiro o layout de checkout de Vendas (carrinho + recibo de papel) —
+   confundível com a própria tela de Vendas. Aqui o pipeline vira o que
+   diferencia um CRM de uma lista de lançamentos: um quadro por estágio,
+   com o valor em jogo visível em cada coluna. */
+
+.crm-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(250px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.crm-column {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.crm-column__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem 0.5rem;
+}
+
+.crm-column__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+
+.crm-column--draft .crm-column__title { color: var(--text-muted); }
+.crm-column--enviada .crm-column__title { color: var(--info-deep); }
+.crm-column--aprovada .crm-column__title { color: var(--success); }
+.crm-column--reprovada .crm-column__title { color: var(--danger); }
+
+.crm-column__count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+  flex-shrink: 0;
+}
+
+.crm-column__sum {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 0 1rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.crm-column__cards {
+  padding: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.crm-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.85rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: left;
+  transition: box-shadow 0.12s ease, transform 0.12s ease, border-color 0.12s ease;
+}
+
+.crm-card:hover,
+.crm-card:focus-visible {
+  box-shadow: var(--shadow-card);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+
+.crm-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.crm-card__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.crm-card__badge--lead { color: var(--amber-deep); background: var(--amber-soft); }
+.crm-card__badge--cliente { color: var(--accent-deep); background: var(--accent-soft); }
+
+.crm-card__num {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.crm-card__nome {
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crm-card__valor {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent-deep);
+  margin: 0;
+}
+
+.crm-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.crm-card__foot span:last-child {
+  flex-shrink: 0;
+}
+
+.crm-card__foot span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crm-card__flag {
+  align-self: flex-start;
+  font-size: 0.66rem;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  color: var(--danger-deep);
+  background: var(--danger-soft);
+}
+
+.crm-card__flag--ok {
+  color: var(--success);
+  background: var(--success-soft);
+}
+
+/* ── CRM: formulário de proposta (modal) ──────────────────────────────
+   Substitui o "recibo" de papel emprestado de Vendas por uma faixa de
+   totais simples — uma proposta é um orçamento em aberto, não um
+   comprovante de pagamento já concluído. */
+
+.crm-totais {
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--line-strong);
+  max-width: 320px;
+  margin-left: auto;
+}
+
+.crm-totais__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  padding: 0.25rem 0;
+}
+
+.crm-totais__row--total {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--text);
+  padding-top: 0.55rem;
+  margin-top: 0.3rem;
+  border-top: 1px solid var(--line);
+}
+
+/* ── CRM: detalhe da proposta (modal) ─────────────────────────────────
+   Trocou o "recibo" de papel monoespaçado (herdado de Vendas) por uma
+   ficha de negociação — cabeçalho com contato + status, uma grade de
+   fatos, itens e totais — consistente com o board/formulário já
+   redesenhados. */
+
+.crm-detail__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.crm-detail__label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin: 0 0 0.25rem;
+}
+
+.crm-detail__nome {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.crm-detail__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem 1.2rem;
+  margin-bottom: 1.1rem;
+}
+
+.crm-detail__grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.crm-detail__grid--full {
+  grid-column: 1 / -1;
+}
+
+.crm-detail__k {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.crm-detail__v {
+  font-size: 0.88rem;
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.crm-detail__itens {
+  border-top: 1px dashed var(--line-strong);
+  padding-top: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.crm-detail__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.86rem;
+}
+
+.crm-detail__item span:last-child {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Ações do modal agrupadas em dois blocos (utilitárias à esquerda, decisão
+   à direita) em vez de uma única fileira solta — evitava confundir "Enviar
+   por e-mail"/"Editar" com "Aprovar"/"Reprovar" quando todos os botões
+   possíveis apareciam juntos. */
+.crm-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+}
+
+.crm-detail__actions-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+@media (max-width: 900px) {
+  .crm-board {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .crm-detail__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Painel Início: dashboard executivo ───────────────────────────────
+   Antes o painel era uma pilha de tabelas com número cru linha a linha
+   (ranking de produtos, estoque baixo, movimentações) — aqui viram
+   visualizações agregadas (barras, funil, gauge, timeline), sem depender
+   de nenhuma lib de gráfico externa (mesma filosofia de "sem dependência
+   nova" já usada pra PDF/QR code neste app). */
+
+.dash-section {
+  margin-bottom: 1.25rem;
+}
+
+.dash-section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.dash-section__kicker {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.dash-grid-2 {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+/* Tendência sob o valor de um stat-card (▲/▼ vs período equivalente do mês
+   anterior) — mesmo cartão de sempre, só ganha uma segunda linha. */
+.kpi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  margin-top: 0.35rem;
+}
+
+/* Barras verticais (ex.: vendas por semana) — cada coluna cresce a partir
+   da base, altura proporcional ao maior valor da série. */
+.mini-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  height: 92px;
+  margin-top: 0.4rem;
+}
+
+.mini-bars__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  height: 100%;
+}
+
+.mini-bars__track {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.mini-bars__bar {
+  width: 60%;
+  min-height: 4px;
+  border-radius: 4px 4px 0 0;
+  background: var(--accent);
+  transition: height 0.2s ease;
+}
+
+.mini-bars__label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Barras horizontais proporcionais (ex.: top produtos por receita) — troca
+   uma tabela de números por uma leitura de "quem pesa mais" à primeira
+   vista. */
+.hbar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.6rem;
+}
+
+.hbar-row {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.hbar-row__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hbar-row__track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.hbar-row__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.hbar-row__value {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Funil de propostas (CRM): uma barra só, dividida proporcionalmente por
+   estágio, com legenda por baixo — a mesma leitura de um funil clássico
+   sem precisar desenhar trapézios. */
+.stage-bar {
+  display: flex;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.7rem;
+  background: var(--line);
+}
+
+.stage-bar__seg {
+  transition: flex 0.2s ease;
+}
+
+.stage-bar__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 0.7rem;
+}
+
+.stage-bar__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.stage-bar__dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Anel de saúde do estoque (% de produtos dentro do mínimo), via
+   conic-gradient — nenhuma lib de gráfico envolvida. */
+.gauge-row {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin-top: 0.6rem;
+}
+
+.gauge {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gauge__hole {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.gauge__value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.gauge-caption {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  max-width: 14rem;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: var(--line);
+  color: var(--text-muted);
+}
+
+.chip--danger {
+  background: var(--danger-soft);
+  color: var(--danger-deep);
+}
+
+/* Linha do tempo (últimas movimentações) — troca a grade de tabela por
+   marcadores em sequência, mais fácil de escanear que uma linha de dados
+   entre outras linhas iguais. */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.4rem;
+}
+
+.timeline__item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.timeline__item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.timeline__dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  margin-top: 0.35rem;
+  flex-shrink: 0;
+}
+
+.timeline__dot--entrada { background: var(--accent); }
+.timeline__dot--saida { background: var(--danger); }
+
+.timeline__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.timeline__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.timeline__origem {
+  font-weight: 700;
+  font-size: 0.86rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timeline__valor {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.84rem;
+  white-space: nowrap;
+}
+
+.timeline__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+@media (max-width: 900px) {
+  .dash-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}

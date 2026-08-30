@@ -1,0 +1,36 @@
+# Config do Supabase CLI para este projeto. Ver scripts/README.md para o
+# passo a passo completo de deploy — este arquivo só declara os nomes/
+# comportamento das Edge Functions (principalmente verify_jwt, que decide
+# se a function exige uma sessão Supabase válida ou é pública).
+project_id = "claude-erp"
+
+[functions.manage-usuarios]
+# Desligado de propósito: a criação do primeiro admin (bootstrap) acontece
+# sem ninguém logado ainda. Toda outra ação exige o `bootstrap_secret` OU
+# reautentica o chamador internamente (ver comentário no topo do arquivo).
+verify_jwt = false
+
+[functions.appvendas-lembretes]
+# Chamada por um agendador (cron externo), não por um usuário logado —
+# protegida pelo secret APPVENDAS_LEMBRETES_SECRET na query string, não por
+# sessão.
+verify_jwt = false
+
+[functions.stripe-webhook]
+# O Stripe chama este endpoint diretamente — não existe sessão Supabase
+# aqui. A autenticidade é validada pela assinatura do Stripe
+# (STRIPE_WEBHOOK_SECRET), não por verify_jwt.
+verify_jwt = false
+
+[functions.mcp-cep]
+# Servidor MCP público de consulta de CEP — sem dado sensível, sem sessão.
+verify_jwt = false
+
+[functions.enviar-proposta]
+verify_jwt = true
+
+[functions.create-stripe-checkout]
+verify_jwt = true
+
+[functions.enviar-confirmacao-negocio]
+verify_jwt = true
